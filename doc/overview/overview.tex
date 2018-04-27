@@ -1,0 +1,99 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%    Overview for Chen/Stetina/Wildman Capstone project
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------------------------------------------------------------------
+%	PACKAGES AND DOCUMENT OPTIONS
+%------------------------------------------------------------------------------
+
+%Page options
+\documentclass[paper=a4, fontsize=12pt]{article}
+\usepackage[margin=1in]{geometry}
+
+%Font options
+%\usepackage{fontspec}
+
+%Math packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{bm}
+
+% Colors
+\usepackage[x11names]{xcolor}
+\colorlet{lcfree}{Green3}
+\colorlet{lcnorm}{Blue3}
+\colorlet{lccong}{Red3}
+
+%Graphics packages
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,chains}
+
+%Section options
+\usepackage{sectsty}
+\allsectionsfont{\normalfont \scshape}
+
+%Bibliography options
+% \usepackage[backend=biber,style=chem-acs]{biblatex}
+
+%Custom commands
+\renewcommand{\abstractname}{\Large Summary}
+\newcommand{\softname}{\texttt{graph\_energy}}
+
+%------------------------------------------------------------------------------
+%	TITLE
+%------------------------------------------------------------------------------
+
+\title{
+\softname\ Overview
+}
+
+\author{You Chen, Torin Stetina, Andrew Wildman}
+
+\date{May 3, 2018}
+
+\begin{document}
+
+\maketitle
+
+%------------------------------------------------------------------------------
+%	BODY
+%------------------------------------------------------------------------------
+
+\begin{abstract}
+  \textbf{The goal of this project is to predict the energy distrubution of a group of microstates from their topological parameters.}
+\end{abstract}
+
+\section*{Motivation}
+
+\section*{Approach}
+
+\subsection*{Data Description}
+
+\subsection*{Methodology}
+
+\section*{Software Design}
+
+\subsection*{Use Cases}
+
+The \softname\ package has four main use cases:
+
+\begin{enumerate}
+  \item Train a neural net to reproduce the energy distribution of a set of microstates,
+    given graph topological parameters that define the microstate, temperature, and population of the microstate at that temperature.
+  \item Evaluate the accuracy of nets trained on different sets of topological parameters at capturing the energy distribution. 
+  \item Use previously trained neural nets to predict the energy distribution of microstates whose energy distribution was previously unknown.
+  \item Visualize the predicted energy distribution and, if available, contrast it with the known energy distribution.
+\end{enumerate}
+
+\subsection*{Software flow}
+
+
+\input{software_flow}
+
+\subsection*{Component specification}
+
+
+\end{document}
