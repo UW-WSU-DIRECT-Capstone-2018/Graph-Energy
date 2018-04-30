@@ -44,6 +44,7 @@
   nmark/.style={draw, cyan, circle, font={\sffamily\bfseries}},
   % -------------------------------------------------
   % Connector line styles for different parts of the diagram
+  norm/.style={->}
 }
 % -------------------------------------------------
 % Place the nodes
@@ -54,17 +55,18 @@
 \node [proc, join] (p3) {Predict energy dist.};
 \node [test, join] (t2) {Compare params?};
 \node [proc] (p4) {Write output to file};
-\node [proc, join] {Plot distribution(s)};
+\node [proc, join] (p4d) {Plot distribution(s)};
 \node [term, join] {Termination};
 
 % Side nodes
 \node [inpt, left=of p1] (i1) {Data files};
-\node [inpt] (i2) {Input file}; 
+\node [inpt] (i2) {Input file/CLI}; 
 
 \node[inpt, left=of p4] (i3) {Output file};
+\node[inpt, left=18em of p4d] (i4) {Distribution plot};
 
 \node [proc, right=of p2] (p5) {Generate net architecture};
-\node [proc, join] (p6) {Train net};
+\node [proc, below=3.4em of p5, join] (p6) {Train net};
 
 % Invisible corner nodes
 \node [coord, right=of i1] (c1) {}; % \cmark{1};
@@ -72,11 +74,17 @@
 \node [coord, right=17.1em of t1] (c3) {}; % \cmark{3};
 \node [coord, right=25em of t2] (c4) {}; % \cmark{4};
 \node [coord, above=8.4em of c4] (c5) {}; % \cmark{5};
+\node [coord, left=of p6] (c6) {}; % \cmark{6};
+\node [coord, below=1.7em of c6] (c7) {}; % \cmark{7};
+
+% One last output node
+\node [inpt, left=23em of c7] (i5) {Net params};
 
 % Simple left/right connections
 \draw [->] (i1.east) -- (p1);
 \draw [->] (p6.west) -- (p3);
 \draw [->] (p4.west) -- (i3);
+\draw [->] (p4d.west) -- (i4);
 
 % Simple top/bottom connections
 \path (t1.south) to node [near start, xshift=1em] {$n$} (p2);
@@ -97,4 +105,13 @@
 \draw[*-] (t2.east) -- (c4);
 \draw[-] (c4) -- (c5);
 \draw[->] (c5) -- (p5.east);
+
+\draw[-] (c6) -- (c7);
+\draw[->] (c7) -- (i5.east);
+
+% Boxes
+\draw[black!10!red,thick,dashed] ($(p1.north west)+(-0.62,0.25)$) rectangle ($(p1.south east)+(0.62,-0.25)$); 
+\draw[blue,thick,dashed] ($(t1.north west)+(-1.65,0.55)$) rectangle ($(c4)+(0.3,-1.15)$);
+\draw[black!40!green,thick,dashed] ($(p4.north west)+(-0.62,0.2)$) rectangle ($(p4d.south east)+(0.62,-0.25)$);
+
 \end{tikzpicture}

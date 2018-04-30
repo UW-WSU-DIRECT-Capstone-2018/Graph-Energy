@@ -19,17 +19,11 @@
 \usepackage{amsthm}
 \usepackage{bm}
 
-% Colors
-\usepackage[x11names]{xcolor}
-\colorlet{lcfree}{Green3}
-\colorlet{lcnorm}{Blue3}
-\colorlet{lccong}{Red3}
-
 %Graphics packages
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{tikz}
-\usetikzlibrary{shapes,arrows,chains}
+\usetikzlibrary{shapes,arrows,chains,calc}
 
 %Section options
 \usepackage{sectsty}
@@ -63,18 +57,28 @@
 %------------------------------------------------------------------------------
 
 \begin{abstract}
-  \textbf{The goal of this project is to predict the energy distrubution of a group of microstates from their topological parameters.}
+  The goal of this project is twofold:
+  \begin{enumerate}
+    \item Develop a software framework that predicts the energy distribution of a group of microstates from their topological parameters
+    \item Validate this framework on two sets of example data,
+      specifically an ideal ice model and a lattice gas model.
+  \end{enumerate}
 \end{abstract}
 
 \section*{Motivation}
 
+% TODO: Motivation
+
 \section*{Approach}
 
-\subsection*{Data Description}
+% TODO: Motivate graph energy
 
-\subsection*{Methodology}
-
-\section*{Software Design}
+The central prediction capabilities of \softname\ are provided through a machine learning algorithm.
+Because the relationship between the graph connections and the energy is expected to be non-linear,
+(e.g. for a hydrogen bond graph, four edges on a node will likely be lower in energy than three or five)
+a simple, feed forward neural net has been chosen as the prediction algorithm.
+Neural networks have a large meta-parameter space,
+so an optimization of these meta-parameters will be built into the software itself.
 
 \subsection*{Use Cases}
 
@@ -88,12 +92,92 @@ The \softname\ package has four main use cases:
   \item Visualize the predicted energy distribution and, if available, contrast it with the known energy distribution.
 \end{enumerate}
 
-\subsection*{Software flow}
+\subsection*{Data Description}
 
+\textbf{Note:} This section is out of date once we get the new output that includes the true microstate energy.
+
+% TODO: Update data description
+
+\vspace{1em}
+
+\noindent The raw data comes from the Clark Group's Shannon entropy program.
+It consists of a set of \texttt{output.dat}\ files,
+each of which is generated at a given temperature
+and contain the topological parameter values of each microstate, as well as the population at that temperature.
+An example of an \text{output.dat} file is given in figure \ref{output}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{output_file}
+  \caption[width=0.8\textwidth]{An example output file from the Clark Group's Shannon entropy program}
+  \label{output}
+\end{figure}
+
+% TODO: Input file spec
+
+\section*{Software Design}
+
+\newpage
+
+\subsection*{Software flow}
 
 \input{software_flow}
 
+The rhombuses represent inputs or outputs to the program,
+rectangles represent processes,
+diamonds represent tests,
+and rounded boxes delimit the bounds of the program.
+The dashed boxes represent software components/classes, which will be described in the next section.
+
 \subsection*{Component specification}
 
+{\noindent \large \textbf{Parser} }
+
+The parser takes the \texttt{output.dat} files as well as the input file or command line parameters,
+then it converts them into the expected inputs for the parser. 
+
+\begin{itemize}
+  \underline{Possible Inputs}:
+  \item Path to input file, OR
+  \item Command line parameters that correspond to entries in the input file, OR
+  \item Parameters passed to parser through a script
+
+  \underline{Outputs}:
+  \item 
+
+  \underline{Exceptions}:
+  \item
+\end{itemize}
+
+
+{\noindent \large \textbf{Predictor} }
+
+% TODO: Predictor spec
+
+\begin{itemize}
+  \underline{Possible Inputs}:
+  \item 
+
+  \underline{Outputs}:
+  \item 
+
+  \underline{Exceptions}:
+  \item
+\end{itemize}
+
+{\noindent \large \textbf{Visualizer} }
+
+% TODO: Visualizer spec
+
+\begin{itemize}
+  \underline{Possible Inputs}:
+  \item 
+
+  \underline{Outputs}:
+  \item 
+
+  \underline{Exceptions}:
+  \item
+\end{itemize}
 
 \end{document}
