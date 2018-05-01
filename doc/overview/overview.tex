@@ -133,20 +133,26 @@ The dashed boxes represent software components/classes, which will be described 
 
 {\noindent \large \textbf{Parser} }
 
-The parser takes the \texttt{output.dat} files as well as the input file or command line parameters,
+The parser takes the \texttt{output.dat} files as well as the input file,
 then it converts them into the expected inputs for the parser. 
-
+ 
+\underline{Input file}:
 \begin{itemize}
-  \underline{Possible Inputs}:
-  \item Path to input file, OR
-  \item Command line parameters that correspond to entries in the input file, OR
-  \item Parameters passed to parser through a script
+  \item \texttt{/path/to/output.dat}
+  \item Job type: \texttt{train} or \texttt{predict}
+  \item Meta parameter options for neural net
+\end{itemize}
 
-  \underline{Outputs}:
-  \item 
+\underline{Outputs}:
+\begin{itemize}
+  \item Dataframe object from columns of \texttt{output.dat}
+  \item Dictionary of meta parameters and job type for neural net
+\end{itemize}
 
-  \underline{Exceptions}:
-  \item
+\underline{Exceptions}:
+\begin{itemize}
+  \item Handle wrong \texttt{.dat} file format
+  \item Handle input file format errors
 \end{itemize}
 
 
@@ -154,30 +160,30 @@ then it converts them into the expected inputs for the parser.
 
 % TODO: Predictor spec
 
-\begin{itemize}
-  \underline{Possible Inputs}:
-  \item 
-
-  \underline{Outputs}:
-  \item 
-
-  \underline{Exceptions}:
-  \item
-\end{itemize}
+%\begin{itemize}
+%  \underline{Possible Inputs}:
+%  \item 
+%
+%  \underline{Outputs}:
+%  \item 
+%
+%  \underline{Exceptions}:
+%  \item
+%\end{itemize}
 
 {\noindent \large \textbf{Visualizer} }
 
 % TODO: Visualizer spec
 
-\begin{itemize}
-  \underline{Possible Inputs}:
-  \item 
-
-  \underline{Outputs}:
-  \item 
-
-  \underline{Exceptions}:
-  \item
-\end{itemize}
+%\begin{itemize}
+%  \underline{Possible Inputs}:
+%  \item 
+%
+%  \underline{Outputs}:
+%  \item 
+%
+%  \underline{Exceptions}:
+%  \item
+%\end{itemize}
 
 \end{document}
