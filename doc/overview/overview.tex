@@ -65,10 +65,6 @@
   \end{enumerate}
 \end{abstract}
 
-\section*{Motivation}
-
-% TODO: Motivation
-
 \section*{Approach}
 
 % TODO: Motivate graph energy
@@ -94,26 +90,25 @@ The \softname\ package has four main use cases:
 
 \subsection*{Data Description}
 
-\textbf{Note:} This section is out of date once we get the new output that includes the true microstate energy.
-
-% TODO: Update data description
-
 \vspace{1em}
 
 \noindent The raw data comes from the Clark Group's Shannon entropy program.
-It consists of a set of \texttt{output.dat}\ files,
+It consists of a set of \texttt{parameters.dat}\ files,
 each of which is generated at a given temperature
-and contain the topological parameter values of each microstate, as well as the population at that temperature.
-An example of an \text{output.dat} file is given in figure \ref{output}.
+and contain the topological parameter values of each microstate,
+as well as the energy of each subgraph.
+The population of the microstates are given by the \texttt{output.dat} files.
+
+An example of an \text{parameters.dat} file is given in figure \ref{output}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{output_file}
-  \caption[width=0.8\textwidth]{An example output file from the Clark Group's Shannon entropy program}
+  \includegraphics[height=0.95\textheight]{output_file}
+  \caption[width=0.8\textwidth]{An example output file from the Clark Group's Shannon entropy program.
+  \texttt{en3} is the 3\textsuperscript{rd} order subgraph energy,
+  and \texttt{pr3} is the 3\textsuperscript{rd} order page rank.}
   \label{output}
 \end{figure}
-
-% TODO: Input file spec
 
 \section*{Software Design}
 
@@ -131,21 +126,21 @@ The dashed boxes represent software components/classes, which will be described 
 
 \subsection*{Component specification}
 
-{\noindent \large \textbf{Parser} }
+{\noindent \large \textbf{Parser} (red)}
 
-The parser takes the \texttt{output.dat} files as well as the input file,
+The parser takes the \texttt{parameters.dat} files as well as the input file,
 then it converts them into the expected inputs for the parser. 
  
 \underline{Input}:
 \begin{itemize}
-  \item \texttt{/path/to/output.dat}
+  \item \texttt{/path/to/parameters.dat}
   \item Job type: \texttt{train} or \texttt{predict}
   \item Meta parameter options for neural net
 \end{itemize}
 
 \underline{Outputs}:
 \begin{itemize}
-  \item Dataframe object from columns of \texttt{output.dat}
+  \item Dataframe object from columns of \texttt{parameters.dat}
   \item Dictionary of meta parameters and job type for neural net
 \end{itemize}
 
@@ -156,34 +151,59 @@ then it converts them into the expected inputs for the parser.
 \end{itemize}
 
 
-{\noindent \large \textbf{Predictor} }
+{\noindent \large \textbf{Predictor} (blue)}
 
-% TODO: Predictor spec
+The predictor takes the metaparameter options and data from the parser,
+then does the following:
 
-%\begin{itemize}
-%  \underline{Possible Inputs}:
-%  \item 
-%
-%  \underline{Outputs}:
-%  \item 
-%
-%  \underline{Exceptions}:
-%  \item
-%\end{itemize}
+\begin{enumerate}
+  \item Checks type of job (predict vs train, which type of training)
+  \item Loads appropriate architecture for type of job \label{start_loop}
+  \item If training, trains the net
+  \item Predicts based on the trained net \label{end_loop}
+  \item Repeats steps \ref{start_loop}-\ref{end_loop} as many times as job requires
+\end{enumerate}
 
-{\noindent \large \textbf{Visualizer} }
+\underline{Inputs}:
+\begin{itemize}
+  \item Dataframe whose rows are the subgraphs and whose columns are the
+		  topological parameters (and true energy)
+  \item Dictionary of neural net meta-parameters
+\end{itemize}
 
-% TODO: Visualizer spec
+\underline{Outputs}:
+\begin{itemize}
+  \item Dataframe whose rows are the subgraphs and whose columns are the topological parameters as well as the predicted (and true) energy
+  \item (Optional) External file written with saved net weights and architecture
+\end{itemize}
 
-%\begin{itemize}
-%  \underline{Possible Inputs}:
-%  \item 
-%
-%  \underline{Outputs}:
-%  \item 
-%
-%  \underline{Exceptions}:
-%  \item
-%\end{itemize}
+\underline{Exceptions}:
+\begin{itemize}
+  \item Empty Dataframe
+  \item Unsupported topological parameter
+  \item (If train) No true energies
+  \item (If predict) No matching pre-trained net for set of params
+\end{itemize}
+
+{\noindent \large \textbf{Visualizer} (green)}
+
+\underline{Inputs}:
+\begin{itemize}
+  \item Dataframe with predicted energy (and true energy)
+  \item Boolean for showing true energy
+\end{itemize}
+
+\underline{Outputs}:
+\begin{itemize}
+  \item Plot of energy distribution
+  \item Text file containing dataframe
+\end{itemize}
+
+\underline{Exceptions}
+\begin{itemize}
+  \item Empty dataframe
+  \item No predicted energy
+  \item (If compare) No true energy
+\end{itemize}
 
 \end{document}
