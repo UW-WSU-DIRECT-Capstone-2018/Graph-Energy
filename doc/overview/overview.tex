@@ -1,0 +1,209 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%    Overview for Chen/Stetina/Wildman Capstone project
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------------------------------------------------------------------
+%	PACKAGES AND DOCUMENT OPTIONS
+%------------------------------------------------------------------------------
+
+%Page options
+\documentclass[paper=a4, fontsize=12pt]{article}
+\usepackage[margin=1in]{geometry}
+
+%Font options
+%\usepackage{fontspec}
+
+%Math packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{bm}
+
+%Graphics packages
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,chains,calc}
+
+%Section options
+\usepackage{sectsty}
+\allsectionsfont{\normalfont \scshape}
+
+%Bibliography options
+% \usepackage[backend=biber,style=chem-acs]{biblatex}
+
+%Custom commands
+\renewcommand{\abstractname}{\Large Summary}
+\newcommand{\softname}{\texttt{graph\_energy}}
+
+%------------------------------------------------------------------------------
+%	TITLE
+%------------------------------------------------------------------------------
+
+\title{
+\softname\ Overview
+}
+
+\author{You Chen, Torin Stetina, Andrew Wildman}
+
+\date{May 3, 2018}
+
+\begin{document}
+
+\maketitle
+
+%------------------------------------------------------------------------------
+%	BODY
+%------------------------------------------------------------------------------
+
+\begin{abstract}
+  The goal of this project is twofold:
+  \begin{enumerate}
+    \item Develop a software framework that predicts the energy distribution of a group of microstates from their topological parameters
+    \item Validate this framework on two sets of example data,
+      specifically an ideal ice model and a lattice gas model.
+  \end{enumerate}
+\end{abstract}
+
+\section*{Approach}
+
+% TODO: Motivate graph energy
+
+The central prediction capabilities of \softname\ are provided through a machine learning algorithm.
+Because the relationship between the graph connections and the energy is expected to be non-linear,
+(e.g. for a hydrogen bond graph, four edges on a node will likely be lower in energy than three or five)
+a simple, feed forward neural net has been chosen as the prediction algorithm.
+Neural networks have a large meta-parameter space,
+so an optimization of these meta-parameters will be built into the software itself.
+
+\subsection*{Use Cases}
+
+The \softname\ package has four main use cases:
+
+\begin{enumerate}
+  \item Train a neural net to reproduce the energy distribution of a set of microstates,
+    given graph topological parameters that define the microstate, temperature, and population of the microstate at that temperature.
+  \item Evaluate the accuracy of nets trained on different sets of topological parameters at capturing the energy distribution. 
+  \item Use previously trained neural nets to predict the energy distribution of microstates whose energy distribution was previously unknown.
+  \item Visualize the predicted energy distribution and, if available, contrast it with the known energy distribution.
+\end{enumerate}
+
+\subsection*{Data Description}
+
+\vspace{1em}
+
+\noindent The raw data comes from the Clark Group's Shannon entropy program.
+It consists of a set of \texttt{parameters.dat}\ files,
+each of which is generated at a given temperature
+and contain the topological parameter values of each microstate,
+as well as the energy of each subgraph.
+The population of the microstates are given by the \texttt{output.dat} files.
+
+An example of an \text{parameters.dat} file is given in figure \ref{output}.
+
+\begin{figure}
+  \centering
+  \includegraphics[height=0.95\textheight]{output_file}
+  \caption[width=0.8\textwidth]{An example output file from the Clark Group's Shannon entropy program.
+  \texttt{en3} is the 3\textsuperscript{rd} order subgraph energy,
+  and \texttt{pr3} is the 3\textsuperscript{rd} order page rank.}
+  \label{output}
+\end{figure}
+
+\section*{Software Design}
+
+\newpage
+
+\subsection*{Software flow}
+
+\input{software_flow}
+
+The rhombuses represent inputs or outputs to the program,
+rectangles represent processes,
+diamonds represent tests,
+and rounded boxes delimit the bounds of the program.
+The dashed boxes represent software components/classes, which will be described in the next section.
+
+\subsection*{Component specification}
+
+{\noindent \large \textbf{Parser} (red)}
+
+The parser takes the \texttt{parameters.dat} files as well as the input file,
+then it converts them into the expected inputs for the parser. 
+ 
+\underline{Input}:
+\begin{itemize}
+  \item \texttt{/path/to/parameters.dat}
+  \item Job type: \texttt{train} or \texttt{predict}
+  \item Meta parameter options for neural net
+\end{itemize}
+
+\underline{Outputs}:
+\begin{itemize}
+  \item Dataframe object from columns of \texttt{parameters.dat}
+  \item Dictionary of meta parameters and job type for neural net
+\end{itemize}
+
+\underline{Exceptions}:
+\begin{itemize}
+  \item Handle wrong \texttt{.dat} file format
+  \item Handle input file format errors
+\end{itemize}
+
+
+{\noindent \large \textbf{Predictor} (blue)}
+
+The predictor takes the metaparameter options and data from the parser,
+then does the following:
+
+\begin{enumerate}
+  \item Checks type of job (predict vs train, which type of training)
+  \item Loads appropriate architecture for type of job \label{start_loop}
+  \item If training, trains the net
+  \item Predicts based on the trained net \label{end_loop}
+  \item Repeats steps \ref{start_loop}-\ref{end_loop} as many times as job requires
+\end{enumerate}
+
+\underline{Inputs}:
+\begin{itemize}
+  \item Dataframe whose rows are the subgraphs and whose columns are the
+		  topological parameters (and true energy)
+  \item Dictionary of neural net meta-parameters
+\end{itemize}
+
+\underline{Outputs}:
+\begin{itemize}
+  \item Dataframe whose rows are the subgraphs and whose columns are the topological parameters as well as the predicted (and true) energy
+  \item (Optional) External file written with saved net weights and architecture
+\end{itemize}
+
+\underline{Exceptions}:
+\begin{itemize}
+  \item Empty Dataframe
+  \item Unsupported topological parameter
+  \item (If train) No true energies
+  \item (If predict) No matching pre-trained net for set of params
+\end{itemize}
+
+{\noindent \large \textbf{Visualizer} (green)}
+
+\underline{Inputs}:
+\begin{itemize}
+  \item Dataframe with predicted energy (and true energy)
+  \item Boolean for showing true energy
+\end{itemize}
+
+\underline{Outputs}:
+\begin{itemize}
+  \item Plot of energy distribution
+  \item Text file containing dataframe
+\end{itemize}
+
+\underline{Exceptions}
+\begin{itemize}
+  \item Empty dataframe
+  \item No predicted energy
+  \item (If compare) No true energy
+\end{itemize}
+
+\end{document}
