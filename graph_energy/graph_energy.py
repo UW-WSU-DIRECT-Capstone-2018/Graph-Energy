@@ -1,6 +1,7 @@
 import keras
 import pickle
 import configparser
+import sys
 import pandas as pd
 
 
@@ -48,5 +49,7 @@ class GraphEnergy(object):
 
 if __name__ == '__main__':
 
+    inputfile = sys.argv[1]
+
     GE = GraphEnergy()
-    GE.parse_input('file.inp')
+    GE.parse_input(inputfile)
